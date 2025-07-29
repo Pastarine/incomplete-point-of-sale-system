@@ -1,0 +1,97 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+struct Product {
+    int id;
+    string name;
+    double price;
+};
+
+struct CartItem {
+    Product product;
+    int quantity;
+};
+
+void showProducts(const vector<Product>& products) {
+    cout << "\nAvailable Products:\n";
+    cout << left << setw(5) << "ID" << setw(20) << "Name" << setw(10) << "Price\n";
+    for (const auto& product : products) {
+        cout << setw(5) << product.id << setw(20) << product.name << "₱" << fixed << setprecision(2) << product.price << "\n";
+    }
+}
+
+void showCart(const vector<CartItem>& cart) {
+    cout << "\nYour Cart:\n";
+    cout << left << setw(20) << "Item" << setw(10) << "Qty" << setw(10) << "Price" << setw(10) << "Subtotal\n";
+    double total = 0;
+    for (const auto& item : cart) {
+        double subtotal = item.quantity * item.product.price;
+        cout << setw(20) << item.product.name
+             << setw(10) << item.quantity
+             << "₱" << setw(9) << item.product.price
+             << "₱" << subtotal << "\n";
+        total += subtotal;
+    }
+    cout << "--------------------------\n";
+    cout << "TOTAL: ₱" << fixed << setprecision(2) << total << "\n";
+}
+
+int main() {
+    vector<Product> products = {
+        {1, "Apple", 15.00},
+        {2, "Banana", 10.00},
+        {3, "Bread", 25.00},
+        {4, "Milk", 30.00}
+    };
+
+    vector<CartItem> cart;
+    int choice;
+
+    do {
+        cout << "\nPoint of Sale System\n";
+        cout << "1. Show Products\n";
+        cout << "2. Add to Cart\n";
+        cout << "3. View Cart / Checkout\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            showProducts(products);
+        } else if (choice == 2) {
+            int id, qty;
+            showProducts(products);
+            cout << "Enter product ID to add to cart: ";
+            cin >> id;
+            cout << "Enter quantity: ";
+            cin >> qty;
+
+            bool found = false;
+            for (const auto& p : products) {
+                if (p.id == id) {
+                    cart.push_back({p, qty});
+                    cout << qty << " x " << p.name << " added to cart.\n";
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                cout << "Invalid product ID.\n";
+            }
+        } else if (choice == 3) {
+            if (cart.empty()) {
+                cout << "Cart is empty.\n";
+            } else {
+                showCart(cart);
+            }
+        } else if (choice == 4) {
+            cout << "Exiting POS system. Thank you!\n";
+        } else {
+            cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
